@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, request, abort
 from auth import auth_slack
 
 GROUP_DOMAIN = 'lambdafrela'
@@ -7,12 +7,14 @@ CONFIRMATION_TOKEN = '55a22c56'
 app = Flask(__name__)
 
 
-@app.route('/callback', methods=['POST'])
+@app.route('/callback/xE4sA', methods=['GET', 'POST'])
 def callback():
 	if not request.json or 'type' not in request.json:
 		abort(400)
+
 	if request.json['type'] == 'confirmation':
-		return CONFIRMATION_TOKEN, 201
+		return CONFIRMATION_TOKEN
+
 	if request.json['type'] == 'wall_post_new':
 		slack = auth_slack()
 		object = request.json['object']
