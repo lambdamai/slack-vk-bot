@@ -5,7 +5,7 @@ stages:
   - test
 
 before_script:
-  - conda env create slackvk python=3.5
+  - conda env create --name slackvk
   - source activate slackvk
   - pip install slacker, flask, gunicorn
 
