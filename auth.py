@@ -1,16 +1,13 @@
 from slacker import Slacker
-import os
+from config import bot_secret
 
 
 def auth_slack():
-
-	bot_secret = os.environ.get('SLACK_BOT_SECRET')
-
 	api = Slacker(bot_secret)
 
 	try:
 		api.auth.test()
-	except:
-		print('auth is not successful')
+	except Exception as e:
+		print('not authed\n', e)
 
 	return api

@@ -1,24 +1,11 @@
 import json
-import os
 
 from flask import Flask, request, abort
-from slacker import Slacker
 
-''' getting enviroment variables '''
+from auth import auth_slack
+from config import *
 
 app = Flask(__name__)
-
-
-def auth_slack():
-	bot_secret = os.environ.get('SLACK_BOT_SECRET')
-	api = Slacker(bot_secret)
-
-	try:
-		api.auth.test()
-	except Exception as e:
-		print('not authed\n', e)
-
-	return api
 
 
 def create_msg(post):
@@ -49,13 +36,10 @@ def callback():
 		abort(400)
 
 	if request.json['type'] == 'confirmation':
-		confirmation_token = os.environ.get('CONFIRMATION_TOKEN')
 		return confirmation_token
 
 	if request.json['type'] == 'wall_post_new':
 		post = request.json['object']
-		channel = os.environ.get('CHANNEL')
-		text = os.environ.get('TEXT')
 		send_message(channel=channel, text=text, attachments=create_msg(post))
 		return 'ok', 200
 
