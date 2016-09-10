@@ -5,9 +5,9 @@ stages:
   - test
 
 before_script:
-  - conda install nbformat
-  - conda env create -f environment.yml
+  - conda env create slackvk python=3.5
   - source activate slackvk
+  - pip install slacker, flask, gunicorn
 
 envs:
   stage: auth
