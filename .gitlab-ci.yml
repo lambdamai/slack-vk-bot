@@ -1,0 +1,26 @@
+image: continuumio/miniconda3:latest
+
+stages:
+  - auth
+  - test
+
+before_script:
+  - conda env create -f environment.yml
+  - source activate slackvk
+
+envs:
+  stage: auth
+  script:
+    - python config.py
+
+slack:
+  stage: auth
+  script:
+    - python auth.py
+
+post:
+  stage: test
+  before_script:
+    - python main.py
+  script:
+    - bash tests/post.sh
