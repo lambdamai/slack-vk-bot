@@ -19,8 +19,8 @@ slack:
   script:
     - python auth.py
 
-post:
-  stage: test
-  script:
-    - python main.py &
-    - bash tests/post.sh
+#post:
+#  stage: test
+#  script:
+#    - python main.py &
+#    - bash tests/post.sh
