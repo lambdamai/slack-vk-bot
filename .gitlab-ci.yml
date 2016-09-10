@@ -5,6 +5,7 @@ stages:
   - test
 
 before_script:
+  - conda install nbformat
   - conda env create -f environment.yml
   - source activate slackvk
 
