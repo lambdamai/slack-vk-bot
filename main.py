@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 def auth_slack():
 	bot_secret = os.environ.get('SLACK_BOT_SECRET')
-	# bot_secret = SLACK_BOT_SECRET
 	api = Slacker(bot_secret)
 
 	try:
