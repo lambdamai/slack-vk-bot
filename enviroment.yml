@@ -26,5 +26,4 @@ dependencies:
   - vk==2.0.2
   - wcwidth==0.1.7
   - werkzeug==0.11.11
-prefix: /home/murych/anaconda3/envs/slackvk
 
