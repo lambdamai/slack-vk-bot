@@ -13,11 +13,14 @@ def create_msg(post):
 	footer = 'Lambda ФРЭЛА | Лямбда'
 	ts = post['date']
 	image_url, thumb_url = None, None
-	
-	if post['attachments'] and post['attachments'][0]['type'] == 'photo':
-		photo = post['attachments'][0]
-		image_url = photo['photo']['photo_1280']
-		thumb_url = photo['photo']['photo_130']
+
+	try:
+		if post['attachments'] and post['attachments'][0]['type'] == 'photo':
+			photo = post['attachments'][0]
+			image_url = photo['photo']['photo_1280']
+			thumb_url = photo['photo']['photo_130']
+	except KeyError:
+		image_url, thumb_url = None, None
 
 	return json.dumps([{
 		'fallback'   : '',
