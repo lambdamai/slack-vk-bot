@@ -12,7 +12,6 @@ def create_msg(post):
 	text = post['text']
 	footer = 'Lambda ФРЭЛА | Лямбда'
 	ts = post['date']
-	image_url, thumb_url = None, None
 
 	try:
 		if post['attachments'] and post['attachments'][0]['type'] == 'photo':
@@ -31,6 +30,7 @@ def create_msg(post):
 		'footer_icon': 'http://lambda-it.ru/static/img/lambda_logo_mid.png',
 		'image_url'  : image_url,
 		'thumb_url'  : thumb_url,
+		'mrkdwn_in'  : ['text'],
 	}]
 	)
 
