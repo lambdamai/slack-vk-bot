@@ -12,6 +12,13 @@ def create_msg(post):
 	text = post['text']
 	footer = 'Lambda ФРЭЛА | Лямбда'
 	ts = post['date']
+	image_url, thumb_url = None, None
+	
+	if post['attachments'] and post['attachments'][0]['type'] == 'photo':
+		photo = post['attachments'][0]
+		image_url = photo['photo']['photo_1280']
+		thumb_url = photo['photo']['photo_130']
+
 	return json.dumps([{
 		'fallback'   : '',
 		'color'      : '#0093DA',
@@ -19,6 +26,8 @@ def create_msg(post):
 		'ts'         : ts,
 		'footer'     : footer,
 		'footer_icon': 'http://lambda-it.ru/static/img/lambda_logo_mid.png',
+		'image_url'  : image_url,
+		'thumb_url'  : thumb_url,
 	}]
 	)
 
