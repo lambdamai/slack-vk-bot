@@ -5,8 +5,7 @@ from auth import auth_vk
 vk = auth_vk()
 
 
-def get_group_info(post):
-	author = vk.groups.getById(group_id=str(post['owner_id'])[1:])[0]
+def get_group_info(author):
 	author_name = author['name']
 	author_link = 'https://vk.com/' + author['screen_name']
 	author_icon = author['photo']
@@ -14,8 +13,7 @@ def get_group_info(post):
 	return author_icon, author_link, author_name
 
 
-def get_user_info(post):
-	author = vk.users.get(user_ids=str(post['owner_id']), fields='photo_50')[0]
+def get_user_info(author):
 	author_name = author['first_name'] + ' ' + author['last_name']
 	author_link = 'https://vk.com/id' + str(author['uid'])
 	author_icon = author['photo_50']
@@ -23,22 +21,36 @@ def get_user_info(post):
 	return author_icon, author_link, author_name
 
 
+def get_image(photo):
+	try:
+		image_url = photo['photo_1280']
+	except KeyError:
+		try:
+			image_url = photo['photo_807']
+		except KeyError:
+			image_url = photo['photo_604']
+
+	thumb_url = photo['photo_75']
+
+	return image_url, thumb_url
+
+
 def create_msg(post):
 	try:
 		if post['copy_history']:
 			post = post['copy_history'][0]
 			if str(post['owner_id'])[0] == '-':
-				author_icon, author_link, author_name = get_group_info(post)
+				author = vk.groups.getById(group_id=str(post['owner_id'])[1:])[0]
+				author_icon, author_link, author_name = get_group_info(author)
 			else:
-				author_icon, author_link, author_name = get_user_info(post)
+				author = vk.users.get(user_ids=str(post['owner_id']), fields='photo_50')[0]
+				author_icon, author_link, author_name = get_user_info(author)
 	except KeyError:
 		author_icon, author_link, author_name = None, None, None
 
 	try:
 		if post['attachments'] and post['attachments'][0]['type'] == 'photo':
-			photo = post['attachments'][0]
-			image_url = photo['photo']['photo_1280']
-			thumb_url = photo['photo']['photo_130']
+			image_url, thumb_url = get_image(post['attachments'][0]['photo'])
 	except KeyError:
 		image_url, thumb_url = None, None
 
