@@ -7,7 +7,7 @@ stages:
 before_script:
   - conda create --name slackvk python=3 flask
   - source activate slackvk
-  - pip install slacker gunicorn
+  - pip install slacker gunicorn vk
 
 envs:
   stage: auth
