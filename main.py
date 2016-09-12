@@ -7,7 +7,7 @@ from message import *
 app = Flask(__name__)
 
 
-def send_message(channel, text='', attachments=None, as_user=True):
+def send_message(channel, text=text_, attachments=None, as_user=True):
 	slack.chat.post_message(channel=channel,
 							text=text,
 							attachments=attachments,
@@ -20,12 +20,12 @@ def callback():
 		abort(400)
 
 	if request.json['type'] == 'confirmation':
-		return confirmation_token
+		return confirmation_token_
 
 	if request.json['type'] == 'wall_post_new':
 		post = request.json['object']
 		attachments = create_msg(post)
-		send_message(channel=channel, text=text, attachments=attachments)
+		send_message(channel=channel_, text=text_, attachments=attachments)
 		return 'ok', 200
 
 
