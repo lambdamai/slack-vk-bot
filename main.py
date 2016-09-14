@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 
 from auth import auth_slack
 from config import *
-from message import *
+from message import create_msg
 
 app = Flask(__name__)
 
