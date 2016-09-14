@@ -5,6 +5,14 @@ from auth import auth_vk
 vk = auth_vk()
 
 
+def get_group(id):
+	return vk.groups.getById(group_id=id)[0]
+
+
+def get_user(id):
+	return vk.users.get(user_ids=id, fields='photo_50')[0]
+
+
 def get_group_info(author):
 	author_name = author['name']
 	author_link = 'https://vk.com/' + author['screen_name']
@@ -39,14 +47,19 @@ def create_msg(post):
 	try:
 		if post['copy_history']:
 			post = post['copy_history'][0]
-			if str(post['owner_id'])[0] == '-':
-				author = vk.groups.getById(group_id=str(post['owner_id'])[1:])[0]
+			if post['owner_id'] < 0:
+				author = get_group(str(post['owner_id'])[1:])
 				author_icon, author_link, author_name = get_group_info(author)
 			else:
-				author = vk.users.get(user_ids=str(post['owner_id']), fields='photo_50')[0]
+				author = get_user(str(post['owner_id']))
 				author_icon, author_link, author_name = get_user_info(author)
 	except KeyError:
-		author_icon, author_link, author_name = None, None, None
+		try:
+			if post['created_by']:
+				author = get_user(str(post['created_by']))
+				author_icon, author_link, author_name = get_user_info(author)
+		except KeyError:
+			author_icon, author_link, author_name = None, None, None
 
 	try:
 		if post['attachments'] and post['attachments'][0]['type'] == 'photo':
