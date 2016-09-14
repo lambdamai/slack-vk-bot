@@ -5,28 +5,30 @@ from auth import auth_vk
 vk = auth_vk()
 
 
-def get_group(id):
-	return vk.groups.getById(group_id=id)[0]
+class User(object):
+	def __init__(self, id):
+		self.id = id
+		self.user = vk.users.get(user_ids=self.id, fields='photo_50')[0]
+
+	def get_info(self):
+		author_name = self.user['first_name'] + ' ' + self.user['last_name']
+		author_link = 'https://vk.com/id' + str(self.user['uid'])
+		author_icon = self.user['photo_50']
+
+		return author_name, author_link, author_icon
 
 
-def get_user(id):
-	return vk.users.get(user_ids=id, fields='photo_50')[0]
+class Group(object):
+	def __init__(self, id):
+		self.id = id
+		self.group = vk.groups.getById(group_id=self.id)[0]
 
+	def get_info(self):
+		author_name = self.group['name']
+		author_link = 'https://vk.com/' + self.group['screen_name']
+		author_icon = self.group['photo']
 
-def get_group_info(author):
-	author_name = author['name']
-	author_link = 'https://vk.com/' + author['screen_name']
-	author_icon = author['photo']
-
-	return author_icon, author_link, author_name
-
-
-def get_user_info(author):
-	author_name = author['first_name'] + ' ' + author['last_name']
-	author_link = 'https://vk.com/id' + str(author['uid'])
-	author_icon = author['photo_50']
-
-	return author_icon, author_link, author_name
+		return author_name, author_link, author_icon
 
 
 def get_image(photo):
@@ -48,18 +50,19 @@ def create_msg(post):
 		if post['copy_history']:
 			post = post['copy_history'][0]
 			if post['owner_id'] < 0:
-				author = get_group(str(post['owner_id'])[1:])
-				author_icon, author_link, author_name = get_group_info(author)
+				id = str(post['owner_id'])[1:]
+				author = Group(id=id)
+				author_name, author_link, author_icon = author.get_info()
 			else:
-				author = get_user(str(post['owner_id']))
-				author_icon, author_link, author_name = get_user_info(author)
+				author = User(id=post['owner_id'])
+				author_name, author_link, author_icon = author.get_info()
 	except KeyError:
 		try:
 			if post['created_by']:
-				author = get_user(str(post['created_by']))
-				author_icon, author_link, author_name = get_user_info(author)
+				author = User(id=post['created_by'])
+				author_name, author_link, author_icon = author.get_info()
 		except KeyError:
-			author_icon, author_link, author_name = None, None, None
+			author_name, author_link, author_icon = None, None, None
 
 	try:
 		if post['attachments'] and post['attachments'][0]['type'] == 'photo':
