@@ -91,3 +91,4 @@ ENV/
 .venv
 .idea
 *.key
+*.json
