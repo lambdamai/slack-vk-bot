@@ -31,6 +31,71 @@ class Group(object):
 		return author_name, author_link, author_icon
 
 
+class Slack(object):
+	def __init__(self, post):
+		try:
+			if post['copy_history']:
+				self.get_repost_info(post=post['copy_history'][0])
+		except KeyError:
+			try:
+				if post['created_by']:
+					self.get_post_info(post=post)
+			except KeyError:
+				self.author_name, self.author_link, self.author_icon = \
+					None, None, None
+		try:
+			if post['attachments'] and post['attachments'][0]['type'] == 'photo':
+				image = post['attachments'][0]['photo']
+				self.image_url, self.thumb_url = get_image(image)
+		except KeyError:
+			self.image_url, self.thumb_url = None, None
+
+		self.text = post['text']
+		self.ts = post['date']
+		self.color = '#0093DA'
+		self.footer = 'Lambda ФРЭЛА | Лямбда'
+		self.footer_icon = 'http://lambda-it.ru/static/img/lambda_logo_mid.png'
+
+	def get_repost_info(self, post):
+		if post['owner_id'] < 0:
+			author = Group(id=str(post['owner_id'])[1:])
+			self.author_name, self.author_link, self.author_icon = \
+				author.get_info()
+		else:
+			author = User(id=post['owner_id'])
+			self.author_name, self.author_link, self.author_icon = \
+				author.get_info()
+
+	def get_post_info(self, post):
+		author = User(id=post['created_by'])
+		self.author_name, self.author_link, self.author_icon = \
+			author.get_info()
+
+	def create_message(self):
+		return json.dumps([{
+			'fallback'   : '',
+			'color'      : self.color,
+			'text'       : self.text,
+			'ts'         : self.ts,
+			'footer'     : self.footer,
+			'footer_icon': self.footer_icon,
+			'image_url'  : self.image_url,
+			'thumb_url'  : self.thumb_url,
+			'author_name': self.author_name,
+			'author_icon': self.author_icon,
+			'author_link': self.author_link,
+			'mrkdwn_in'  : ['text'],
+		}]
+		)
+
+	@staticmethod
+	def send_message(auth, channel, text, attachments=None, as_user=True):
+		auth.chat.post_message(channel=channel,
+		                       text=text,
+		                       attachments=attachments,
+		                       as_user=as_user)
+
+
 def get_image(photo):
 	try:
 		image_url = photo['photo_1280']
@@ -44,47 +109,3 @@ def get_image(photo):
 
 	return image_url, thumb_url
 
-
-def create_msg(post):
-	try:
-		if post['copy_history']:
-			post = post['copy_history'][0]
-			if post['owner_id'] < 0:
-				id = str(post['owner_id'])[1:]
-				author = Group(id=id)
-				author_name, author_link, author_icon = author.get_info()
-			else:
-				author = User(id=post['owner_id'])
-				author_name, author_link, author_icon = author.get_info()
-	except KeyError:
-		try:
-			if post['created_by']:
-				author = User(id=post['created_by'])
-				author_name, author_link, author_icon = author.get_info()
-		except KeyError:
-			author_name, author_link, author_icon = None, None, None
-
-	try:
-		if post['attachments'] and post['attachments'][0]['type'] == 'photo':
-			image_url, thumb_url = get_image(post['attachments'][0]['photo'])
-	except KeyError:
-		image_url, thumb_url = None, None
-
-	text = post['text']
-	ts = post['date']
-
-	return json.dumps([{
-		'fallback'   : '',
-		'color'      : '#0093DA',
-		'text'       : text,
-		'ts'         : ts,
-		'footer'     : 'Lambda ФРЭЛА | Лямбда',
-		'footer_icon': 'http://lambda-it.ru/static/img/lambda_logo_mid.png',
-		'image_url'  : image_url,
-		'thumb_url'  : thumb_url,
-		'author_name': author_name,
-		'author_icon': author_icon,
-		'author_link': author_link,
-		'mrkdwn_in'  : ['text'],
-	}]
-	)
