@@ -1,5 +1,5 @@
 from slacker import Slacker
-from config import bot_secret_
+from config import bot_secret_, page_id_, access_token_
 from vk import Session, API
 import facebook
 
@@ -24,12 +24,14 @@ def auth_vk():
 
 def auth_facebook(cfg):
 	graph = facebook.GraphAPI(cfg['access_token'])
-	resp = graph.get_object('me/accounts')
+	resp = graph.get_object('lambdafrela')
 	page_access_token = None
 
-	for page in resp['data']:
-		if page['id'] == cfg['page_id']:
-			page_access_token = page['access_token']
+	try:
+		if resp['id'] == cfg['page_id']:
+			page_access_token = cfg['access_token']
+	except KeyError:
+		print('not authed fb')
 
 	graph = facebook.GraphAPI(page_access_token)
 
