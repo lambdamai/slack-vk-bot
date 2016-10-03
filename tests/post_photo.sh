@@ -1,6 +1,0 @@
-#!/bin/bash
-
-CURL='/usr/bin/curl'
-RVMHTTP="http://0.0.0.0:5000/callback/xE4sA"
-
-$CURL -H "Content-Type: application/json" -X POST -d '{"type":"wall_post_new","object":{"id":305,"from_id":-105873414,"owner_id":-105873414,"date":1473530565,"post_type":"post","text":"Поздравим наших ребят выступавших на [club126644439|Хакатоне CyberGarden #4] с проектом Flock и занявших там призовое место!\n#кодимподпальмой #вернулисьспобедой","signer_id":140643708,"can_edit":1,"created_by":140643708,"can_delete":1,"attachments":[{"type":"photo","photo":{"id":432608681,"album_id":-7,"owner_id":-105873414,"user_id":140643708,"photo_75":"http:\/\/pp.vk.me\/c631716\/v631716708\/481d8\/x7CdZ9R_Bmk.jpg","photo_130":"http:\/\/pp.vk.me\/c631716\/v631716708\/481d9\/pLnp-BKWAkw.jpg","photo_604":"http:\/\/pp.vk.me\/c631716\/v631716708\/481da\/aJ7Lq1-7ZXI.jpg","photo_807":"http:\/\/pp.vk.me\/c631716\/v631716708\/481db\/MXUqMPInUOw.jpg","photo_1280":"http:\/\/pp.vk.me\/c631716\/v631716708\/481dc\/-H6BHUgAuOM.jpg","photo_2560":"http:\/\/pp.vk.me\/c631716\/v631716708\/481dd\/7sRLV2OjKhs.jpg","width":2304,"height":1728,"text":"","date":1473525332,"post_id":300,"access_key":"7fac91d5ca30184be0"}}],"comments":{"count":0}},"group_id":105873414}' $RVMHTTP
