@@ -1,4 +1,4 @@
-facebook
+facebook-sdk
 flask
 slacker
 vk
