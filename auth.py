@@ -1,7 +1,8 @@
-from slacker import Slacker
-from config import bot_secret_, page_id_, access_token_
-from vk import Session, API
 import facebook
+from slacker import Slacker
+from vk import Session, API
+
+from config import bot_secret_
 
 
 def auth_slack():
