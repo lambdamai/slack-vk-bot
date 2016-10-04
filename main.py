@@ -1,4 +1,4 @@
-from flask import Flask, abort, request
+from flask import Flask, abort, request, render_template
 
 from auth import auth_facebook, auth_slack
 from config import *
@@ -10,6 +10,11 @@ cfg = {
 	'page_id'     : page_id_,
 	'access_token': access_token_
 }
+
+
+@app.route('/')
+def index():
+	return render_template('index.html')
 
 
 @app.route('/callback/xE4sA', methods=['GET', 'POST'])
