@@ -11,14 +11,17 @@ def auth_slack():
 	try:
 		api.auth.test()
 	except Exception as e:
-		print('not authed\n', e)
+		print('slack not authed\n', e)
 
 	return api
 
 
 def auth_vk():
-	session = Session()
-	api = API(session)
+	try:
+		session = Session()
+		api = API(session)
+	except Exception as e:
+		print('vk not authed\n', e)
 
 	return api
 
