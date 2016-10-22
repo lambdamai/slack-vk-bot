@@ -16,10 +16,3 @@ test:
     - python auth.py
   only:
     - tags
-
-
-#post:
-#  stage: test
-#  script:
-#    - python main.py &
-#    - bash tests/post.sh
