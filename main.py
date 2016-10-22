@@ -1,10 +1,14 @@
-from flask import Flask, abort, request
+from flask import Flask, abort, request, render_template
 
 from auth import auth_facebook, auth_slack
 from config import *
 from message import *
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+	return render_template('index.html')
 
 
 @app.route('/callback/xE4sA', methods=['GET', 'POST'])
@@ -23,7 +27,6 @@ def callback():
 
 
 slack = auth_slack()
-# facebook = auth_facebook()
 
 if __name__ == '__main__':
 	app.run(host="0.0.0.0", port=5000)
