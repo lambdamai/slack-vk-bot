@@ -21,8 +21,15 @@ def callback():
 
 	if request.json['type'] == 'wall_post_new':
 		post = request.json['object']
+
 		slack_message = Slack(post=post).create_message()
 		Slack.send_message(auth=slack, channel=channel_, text=text_, attachments=slack_message)
+
+		facebook_post = Facebook(post=post)
+		facebook_attachment = facebook_post.create_message()
+		facebook_text = facebook_post.get_text(post=post)
+		Facebook.send_message(auth=facebook, text=facebook_text, attachment=facebook_attachment)
+
 		return 'ok', 200
 
 

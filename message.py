@@ -46,9 +46,11 @@ class Slack(object):
 				self.author_name, self.author_link, self.author_icon = \
 					None, None, None
 		try:
-			if post['attachments'] and post['attachments'][0]['type'] == 'photo':
-				image = post['attachments'][0]['photo']
-				self.image_url, self.thumb_url = get_image(image)
+			if post['attachments']:
+				for attachment in post['attachments']:
+					if attachment['type'] == 'photo':
+						image = post['attachments'][0]['photo']
+						self.image_url, self.thumb_url = get_image(image)
 		except KeyError:
 			self.image_url, self.thumb_url = None, None
 
@@ -98,6 +100,43 @@ class Slack(object):
 		                       as_user=as_user)
 
 
+class Facebook(object):
+	def __init__(self, post):
+		try:
+			if post['attachments']:
+				for attachment in post['attachments']:
+					if attachment['type'] == 'photo':
+						image = post['attachments'][0]['photo']
+						image_url, _ = get_image(image)
+					elif attachment['type'] == 'link':
+						link = attachment['link']
+				self.picture = image_url
+				self.name = link['title']
+				self.link = link['url']
+				self.caption = link['title']
+				self.description = link['description']
+		except KeyError:
+			self.name, self.link, self.caption, self.description, self.picture = \
+				None, None, None, None, None
+
+	def create_message(self):
+		return {
+			'name'       : self.name,
+			'link'       : self.link,
+			'caption'    : self.caption,
+			'description': self.description,
+			'picture'    : self.picture,
+		}
+
+	@staticmethod
+	def get_text(post):
+		return post['text']
+
+	@staticmethod
+	def send_message(auth, text, attachment):
+		auth.put_wall_post(message=text, attachment=attachment)
+
+
 def get_image(photo):
 	try:
 		image_url = photo['photo_1280']
@@ -110,4 +149,3 @@ def get_image(photo):
 	thumb_url = photo['photo_75']
 
 	return image_url, thumb_url
-
