@@ -1,4 +1,3 @@
-import facebook
 from slacker import Slacker
 from vk import Session, API
 
