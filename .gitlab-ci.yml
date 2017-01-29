@@ -15,11 +15,4 @@ test:
     - python config.py
     - python auth.py
   only:
-    - master
-
-
-#post:
-#  stage: test
-#  script:
-#    - python main.py &
-#    - bash tests/post.sh
+    - tags

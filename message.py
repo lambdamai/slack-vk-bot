@@ -15,7 +15,9 @@ class User(object):
 		author_link = 'https://vk.com/id' + str(self.user['uid'])
 		author_icon = self.user['photo_50']
 
-		return author_name, author_link, author_icon
+		# return author_name, author_link, author_icon
+		# returning nothing to provide anonymity
+		return None, None, None
 
 
 class Group(object):
