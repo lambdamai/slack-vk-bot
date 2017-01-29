@@ -1,5 +1,6 @@
 from slacker import Slacker
 from vk import Session, API
+from config import bot_secret_
 
 
 def auth_slack():
