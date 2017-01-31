@@ -38,39 +38,14 @@ class Slack(object):
             self.post = Post(post, attachments=True)
 
     def create_attachments(self):
+        data_to_send = Post.post_data_prepare(self.post)
         try:
             if self.repost:
-                return json.dumps([{
-                    'fallback':    '',
-                    'color':       self.post.color,
-                    'text':        self.post.text,
-                    'ts':          self.post.ts,
-                    'footer':      self.post.footer,
-                    'footer_icon': self.post.footer_icon,
-                    'image_url':   self.post.image_url,
-                    'thumb_url':   self.post.thumb_url,
-                }, {
-                    'fallback':    '',
-                    'color':       self.repost.color,
-                    'text':        self.repost.text,
-                    'ts':          self.repost.ts,
-                    'footer':      self.repost.footer,
-                    'footer_icon': self.repost.footer_icon,
-                    'image_url':   self.repost.image_url,
-                    'thumb_url':   self.repost.thumb_url,
-                }])
+                data_repost_to_send = Post.post_data_prepare(self.repost)
+                return json.dumps([data_to_send, data_repost_to_send])
         except AttributeError:
-            return json.dumps([{
-                'fallback':    '',
-                'color':       self.post.color,
-                'text':        self.post.text,
-                'ts':          self.post.ts,
-                'footer':      self.post.footer,
-                'footer_icon': self.post.footer_icon,
-                'image_url':   self.post.image_url,
-                'thumb_url':   self.post.thumb_url,
-                'mrkdwn_in':   ['text'],
-            }])
+            data_to_send['mrkdwn_in'] = ['text']
+        return json.dumps([data_to_send])
 
     @staticmethod
     def send_message(auth, channel, text, attachments=None, as_user=True):
@@ -87,7 +62,6 @@ class Post(object):
         self.color = '#0093DA'
         self.footer = 'Lambda ФРЭЛА | Лямбда'
         self.footer_icon = 'http://lambda-it.ru/static/img/lambda_logo_mid.png'
-        # try:
         if attachments:
             try:
                 if post['attachments']:
@@ -114,6 +88,19 @@ class Post(object):
                 return image_url, thumb_url
             else:
                 return None, None
+    
+    @staticmethod
+    def post_data_prepare(post):
+        return {
+            'fallback':    '',
+            'color':       post.color,
+            'text':        post.text,
+            'ts':          post.ts,
+            'footer':      post.footer,
+            'footer_icon': post.footer_icon,
+            'image_url':   post.image_url,
+            'thumb_url':   post.thumb_url,
+        }
 
 
 class Repost(Post):
