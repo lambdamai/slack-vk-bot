@@ -6,110 +6,123 @@ vk = auth_vk()
 
 
 class User(object):
-	def __init__(self, id):
-		self.id = id
-		self.user = vk.users.get(user_ids=self.id, fields='photo_50')[0]
+    def __init__(self, id):
+        self.id = id
+        self.user = vk.users.get(user_ids=self.id, fields='photo_50')[0]
 
-	def get_info(self):
-		author_name = self.user['first_name'] + ' ' + self.user['last_name']
-		author_link = 'https://vk.com/id' + str(self.user['uid'])
-		author_icon = self.user['photo_50']
-
-		# return author_name, author_link, author_icon
-		# returning nothing to provide anonymity
-		return None, None, None
+    def footer(self):
+        footer = self.user['first_name'] + ' ' + self.user['last_name']
+        footer_icon = self.user['photo_50']
+        return footer, footer_icon
 
 
 class Group(object):
-	def __init__(self, id):
-		self.id = id
-		self.group = vk.groups.getById(group_id=self.id)[0]
+    def __init__(self, id):
+        self.id = id
+        self.group = vk.groups.getById(group_id=self.id)[0]
 
-	def get_info(self):
-		author_name = self.group['name']
-		author_link = 'https://vk.com/' + self.group['screen_name']
-		author_icon = self.group['photo']
+    def footer(self):
+        footer = self.group['name']
+        footer_icon = self.group['photo']
 
-		return author_name, author_link, author_icon
+        return footer, footer_icon
 
 
 class Slack(object):
-	def __init__(self, post):
-		try:
-			if post['copy_history']:
-				self.get_repost_info(post=post['copy_history'][0])
-		except KeyError:
-			try:
-				if post['created_by']:
-					self.get_post_info(post=post)
-			except KeyError:
-				self.author_name, self.author_link, self.author_icon = \
-					None, None, None
-		try:
-			if post['attachments']:
-				for attachment in post['attachments']:
-					if attachment['type'] == 'photo':
-						image = post['attachments'][0]['photo']
-						self.image_url, self.thumb_url = get_image(image)
-		except KeyError:
-			self.image_url, self.thumb_url = None, None
+    def __init__(self, post):
+        try:
+            if post['copy_history']:
+                self.repost = Repost(post['copy_history'][0])
+                self.post = Post(post)
+        except KeyError:
+            self.post = Post(post, attachments=True)
 
-		self.text = post['text']
-		self.ts = post['date']
-		self.color = '#0093DA'
-		self.footer = 'Lambda ФРЭЛА | Лямбда'
-		self.footer_icon = 'http://lambda-it.ru/static/img/lambda_logo_mid.png'
+    def create_attachments(self):
+        data_to_send = self.post.json_prepare()
+        try:
+            if self.repost:
+                data_repost_to_send = self.repost.json_prepare()
+                return json.dumps([data_to_send, data_repost_to_send])
+        except AttributeError:
+            data_to_send['mrkdwn_in'] = ['text']
+        return json.dumps([data_to_send])
 
-	def get_repost_info(self, post):
-		if post['owner_id'] < 0:
-			author = Group(id=str(post['owner_id'])[1:])
-			self.author_name, self.author_link, self.author_icon = \
-				author.get_info()
-		else:
-			author = User(id=post['owner_id'])
-			self.author_name, self.author_link, self.author_icon = \
-				author.get_info()
-
-	def get_post_info(self, post):
-		author = User(id=post['created_by'])
-		self.author_name, self.author_link, self.author_icon = \
-			author.get_info()
-
-	def create_message(self):
-		return json.dumps([{
-			'fallback'   : '',
-			'color'      : self.color,
-			'text'       : self.text,
-			'ts'         : self.ts,
-			'footer'     : self.footer,
-			'footer_icon': self.footer_icon,
-			'image_url'  : self.image_url,
-			'thumb_url'  : self.thumb_url,
-			'author_name': self.author_name,
-			'author_icon': self.author_icon,
-			'author_link': self.author_link,
-			'mrkdwn_in'  : ['text'],
-		}]
-		)
-
-	@staticmethod
-	def send_message(auth, channel, text, attachments=None, as_user=True):
-		auth.chat.post_message(channel=channel,
-		                       text=text,
-		                       attachments=attachments,
-		                       as_user=as_user)
+    @staticmethod
+    def send_message(auth, channel, text, attachments=None, as_user=True):
+        auth.chat.post_message(channel=channel,
+                               text=text,
+                               attachments=attachments,
+                               as_user=as_user)
 
 
+class Post(object):
+    def __init__(self, post, attachments=None):
+        self.text = post['text']
+        self.ts = post['date']
+        self.color = '#0093DA'
+        self.footer = 'Lambda ФРЭЛА | Лямбда'
+        self.footer_icon = 'http://lambda-it.ru/static/img/lambda_logo_mid.png'
+        if attachments:
+            try:
+                if post['attachments']:
+                    self.image_url, self.thumb_url = self.get_image(
+                        post['attachments'])
+            except KeyError:
+                self.image_url, self.thumb_url = None, None
+        else:
+            self.image_url, self.thumb_url = None, None
 
-def get_image(photo):
-	try:
-		image_url = photo['photo_1280']
-	except KeyError:
-		try:
-			image_url = photo['photo_807']
-		except KeyError:
-			image_url = photo['photo_604']
+    @staticmethod
+    def get_image(attachments):
+        for attachment in attachments:
+            if attachment['type'] == 'photo':
+                image = attachment['photo']
+                try:
+                    image_url = image['photo_1280']
+                except KeyError:
+                    try:
+                        image_url = image['photo_807']
+                    except KeyError:
+                        image_url = image['photo_604']
+                thumb_url = image['photo_75']
+                return image_url, thumb_url
+            else:
+                return None, None
 
-	thumb_url = photo['photo_75']
+    def json_prepare(self):
+        return {
+            'fallback':    '',
+            'color':       self.color,
+            'text':        self.text,
+            'ts':          self.ts,
+            'footer':      self.footer,
+            'footer_icon': self.footer_icon,
+            'image_url':   self.image_url,
+            'thumb_url':   self.thumb_url,
+        }
 
-	return image_url, thumb_url
+
+class Repost(Post):
+    def __init__(self, repost):
+        Post.__init__(self, post=repost)
+        self.text = repost['text']
+        self.ts = repost['date']
+        self.color = '#2393DA'
+        self.footer, self.footer_icon = self.get_footer(repost)
+        try:
+            if repost['attachments']:
+                self.image_url, self.thumb_url = self.get_image(
+                    repost['attachments'])
+        except KeyError:
+            self.image_url, self.thumb_url = None, None
+
+    @staticmethod
+    def get_footer(post):
+        if post['owner_id'] < 0:
+            author = Group(id=str(post['owner_id'])[1:])
+            footer, footer_icon = author.footer()
+            return footer, footer_icon
+        else:
+            author = User(id=post['owner_id'])
+            footer, footer_icon = author.footer()
+            return footer, footer_icon
