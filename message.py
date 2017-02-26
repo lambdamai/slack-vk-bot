@@ -60,7 +60,7 @@ class Post(object):
         self.text = post['text']
         self.ts = post['date']
         self.color = '#0093DA'
-        self.footer = 'Lambda ФРЭЛА | Лямбда'
+        self.footer = 'Lambda'
         self.footer_icon = 'http://lambda-it.ru/static/img/lambda_logo_mid.png'
         if attachments:
             try:
@@ -107,7 +107,7 @@ class Repost(Post):
         Post.__init__(self, post=repost)
         self.text = repost['text']
         self.ts = repost['date']
-        self.color = '#2393DA'
+        self.color = '#1C6047'
         self.footer, self.footer_icon = self.get_footer(repost)
         try:
             if repost['attachments']:
