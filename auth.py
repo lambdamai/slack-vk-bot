@@ -1,10 +1,10 @@
 from slacker import Slacker
 from vk import Session, API
-from config import bot_secret_
+from config import BOT_SECRET
 
 
 def auth_slack():
-	api = Slacker(bot_secret_)
+	api = Slacker(BOT_SECRET)
 
 	try:
 		api.auth.test()

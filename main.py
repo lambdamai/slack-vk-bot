@@ -1,7 +1,7 @@
 from flask import Flask, abort, request, render_template
 
+from config import PATH, auth_slack
 from auth import auth_slack
-from config import *
 from message import *
 
 app = Flask(__name__)
@@ -12,7 +12,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route(path, methods=['GET', 'POST'])
+@app.route(PATH, methods=['GET', 'POST'])
 def callback():
     if not request.json or 'type' not in request.json:
         abort(400)

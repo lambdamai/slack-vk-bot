@@ -1,9 +1,7 @@
-# gunicorn-flask
-
 FROM python:alpine
 
 RUN apk update && \
-	apk add py3-gunicorn && \
+	apk add py-gunicorn && \
 	rm -rf /var/cache/apk/*
 
 RUN mkdir /code
@@ -17,4 +15,4 @@ ADD . /code
 EXPOSE 5000
 
 # Start gunicorn
-CMD ["/usr/bin/gunicorn", "--config", "gunicorn_config.py", "main:app"]
+CMD ["gunicorn", "--config", "gunicorn_config.py", "main:app"]

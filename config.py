@@ -9,8 +9,8 @@ try:
 except configparser.ParsingError as e:
     print(e)
 
-confirmation_token_ = config['VK']['CONFIRMATION_TOKEN']
-bot_secret_ = config['SLACK']['SLACK_BOT_SECRET']
-channel_ = config['SLACK']['CHANNEL']
-text_ = config['SLACK']['TEXT']
-path_ = config['SERVER']['PATH']
+CONFIRMATION_TOKEN = config['VK']['CONFIRMATION_TOKEN']
+BOT_SECRET = config['SLACK']['SLACK_BOT_SECRET']
+CHANNEL = config['SLACK']['CHANNEL']
+TEXT = config['SLACK']['TEXT']
+PATH = config['SERVER']['PATH']
