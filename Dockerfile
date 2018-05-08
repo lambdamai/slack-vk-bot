@@ -17,4 +17,4 @@ ADD . /code
 EXPOSE 5000
 
 # Start gunicorn
-CMD ["/usr/bin/gunicorn", "--config", "/code/gunicorn_config.py", "main:app"]
+CMD ["/usr/bin/gunicorn", "--config", "gunicorn_config.py", "main:app"]
