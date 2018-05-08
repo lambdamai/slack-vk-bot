@@ -61,7 +61,7 @@ class Post(object):
         self.ts = post['date']
         self.color = '#0093DA'
         self.footer = 'Lambda'
-        self.footer_icon = 'http://lambda-it.ru/static/img/lambda_logo_mid.png'
+        self.footer_icon = 'https://i.imgur.com/cIcCMA7.png'
         if attachments:
             try:
                 if post['attachments']:
