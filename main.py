@@ -1,6 +1,6 @@
 from flask import Flask, abort, request, render_template
 
-from config import PATH
+import config
 from auth import auth_slack
 from message import *
 
@@ -12,13 +12,13 @@ def index():
     return render_template('index.html')
 
 
-@app.route(PATH, methods=['GET', 'POST'])
+@app.route(config.PATH, methods=['GET', 'POST'])
 def callback():
     if not request.json or 'type' not in request.json:
         abort(400)
 
     if request.json['type'] == 'confirmation':
-        return confirmation_token_
+        return config.CONFIRMATION_TOKEN
 
     if request.json['type'] == 'wall_post_new':
         post = request.json['object']
