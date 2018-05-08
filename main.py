@@ -12,7 +12,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/callback/xE4sA', methods=['GET', 'POST'])
+@app.route(path, methods=['GET', 'POST'])
 def callback():
     if not request.json or 'type' not in request.json:
         abort(400)
