@@ -24,8 +24,8 @@ def callback():
         post = request.json['object']
 
         attachments = Slack(post=post).create_attachments()
-        Slack.send_message(auth=slack, channel=channel_, text=text_,
-                           attachments=attachments)
+        Slack.send_message(auth=slack, channel=config.CHANNEL,
+            text=config.TEXT, attachments=attachments)
 
         return 'ok', 200
 
