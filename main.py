@@ -1,6 +1,6 @@
 from flask import Flask, abort, request, render_template
 
-from config import PATH, auth_slack
+from config import PATH
 from auth import auth_slack
 from message import *
 

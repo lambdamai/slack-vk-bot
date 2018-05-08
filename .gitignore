@@ -92,3 +92,4 @@ ENV/
 .idea
 *.key
 *.json
+config.ini
