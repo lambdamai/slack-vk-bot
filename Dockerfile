@@ -4,15 +4,14 @@ RUN apk update && \
 	apk add py-gunicorn && \
 	rm -rf /var/cache/apk/*
 
-RUN mkdir /code
 WORKDIR /code
 
-ADD requirements.txt /code
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-ADD . /code
+COPY . .
 
 EXPOSE 5000
 
 # Start gunicorn
-CMD ["gunicorn", "--config", "gunicorn_config.py", "main:app"]
+ENTRYPOINT ["gunicorn", "--config", "gunicorn_config.py", "main:app"]

@@ -24,5 +24,10 @@ build_staging:
   stage: build
   <<: *build_anchor
   script:
+    - export SLACK_CHANNEL=${CHANNEL}
+    - export VK_CONFIRMATION_TOKEN=${CONFIRMATION_TOKEN}
+    - export SLACK_BOT_SECRET=${SLACK_BOT_SECRET}
+    - export SLACK_TEXT=${TEXT}
+    - export SERVER_PATH=${PATH}
     - docker build -t ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest --pull .
     - docker push ${CI_REGISTRY}/${CI_PROJECT_PATH}:latest

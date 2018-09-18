@@ -1,16 +1,7 @@
 import os
-import configparser
 
-config = configparser.ConfigParser()
-config_file = os.path.join(os.path.dirname(__file__), 'config.ini')
-
-try:
-    config.read(config_file)
-except configparser.ParsingError as e:
-    print(e)
-
-CONFIRMATION_TOKEN = config['VK']['CONFIRMATION_TOKEN']
-BOT_SECRET = config['SLACK']['SLACK_BOT_SECRET']
-CHANNEL = config['SLACK']['CHANNEL']
-TEXT = config['SLACK']['TEXT']
-PATH = config['SERVER']['PATH']
+CONFIRMATION_TOKEN = os.environ['VK_CONFIRMATION_TOKEN']
+BOT_SECRET = os.environ['SLACK_SLACK_BOT_SECRET']
+CHANNEL = os.environ['SLACK_CHANNEL']
+TEXT = os.environ['SLACK_TEXT']
+PATH = os.environ['SERVER_PATH']
